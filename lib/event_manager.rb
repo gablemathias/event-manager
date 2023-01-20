@@ -1,7 +1,7 @@
 require 'csv'
 
 class EventManager
-  attr_reader :content
+  attr_accessor :content
 
   def initialize(file)
     @file_name = file
@@ -10,10 +10,21 @@ class EventManager
       headers: true,
       header_converters: :symbol
     )
-    puts "Event Manager Initialized!"
+    content.each do |row|
+      name = row[:first_name]
+      zipcode = clean_zipcode(row[:zipcode])
+      puts "#{name} - #{zipcode}"
+    end
   end
 
-  def show_name(index, header)
-    content.read[index][header.to_sym]
+  private
+
+  def clean_zipcode(zipcode)
+    return "00000" if zipcode.nil?
+    return zipcode.rjust(5, "0") if zipcode.length < 5
+    return zipcode.slice(0...5) if zipcode.length > 5
+
+    zipcode
   end
+
 end
