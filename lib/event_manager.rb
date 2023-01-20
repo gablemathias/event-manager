@@ -3,8 +3,14 @@ puts "Event Manager Initialized!"
 
 fname = "event_attendees.csv"
 
-content = CSV.open(fname, headers: true)
+content = CSV.open(
+  fname,
+  headers: true,
+  header_converters: :symbol
+)
 
 content.each do |row|
-  p row[2]
+  name = row[:first_name]
+  zipcode = row[:zipcode]
+  puts "#{name} #{zipcode}"
 end
