@@ -1,16 +1,19 @@
 require 'csv'
-puts "Event Manager Initialized!"
 
-fname = "event_attendees.csv"
+class EventManager
+  attr_reader :content
 
-content = CSV.open(
-  fname,
-  headers: true,
-  header_converters: :symbol
-)
+  def initialize(file)
+    @file_name = file
+    @content = CSV.open(
+      file,
+      headers: true,
+      header_converters: :symbol
+    )
+    puts "Event Manager Initialized!"
+  end
 
-content.each do |row|
-  name = row[:first_name]
-  zipcode = row[:zipcode]
-  puts "#{name} #{zipcode}"
+  def show_name(index, header)
+    content.read[index][header.to_sym]
+  end
 end
