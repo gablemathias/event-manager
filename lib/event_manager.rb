@@ -21,8 +21,17 @@ class EventManager
       name = row[:first_name]
       zipcode = clean_zipcode(row[:zipcode])
 
-      puts "#{name} - #{zipcode} - #{legislators(zipcode)}"
+      puts personal_letter(name, legislators(zipcode))
     end
+  end
+
+  def load_template
+    File.read('form_letter.html')
+  end
+
+  def personal_letter(name, legislators)
+    letter = load_template.gsub('FIRST_NAME', name)
+    letter.gsub!('LEGISLATORS', legislators)
   end
 
   private
