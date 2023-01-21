@@ -14,6 +14,10 @@ class EventManager
     )
     @civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
     @civic_info.key = api_key
+    show
+  end
+
+  def show
     content.each do |row|
       @name = row[:first_name]
       @zipcode = clean_zipcode(row[:zipcode])
@@ -23,6 +27,8 @@ class EventManager
     end
   end
 
+  private
+
   def erb_template
     template_letter = File.read('form_letter.erb')
     ERB.new template_letter
@@ -31,8 +37,6 @@ class EventManager
   def personal_letter
     erb_template.result(binding)
   end
-
-  private
 
   def clean_zipcode(zipcode)
     zipcode.to_s.rjust(5, "0")[0...5]
