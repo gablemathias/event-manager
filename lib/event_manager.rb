@@ -46,7 +46,3 @@ class EventManager
     'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
   end
 end
-
-# Set the API Key
-# Send the query with the given criteria
-# Parse the response for the names of your legislators.
