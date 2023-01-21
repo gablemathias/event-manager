@@ -12,14 +12,8 @@ class EventManager
       header_converters: :symbol
     )
     @civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
-    @civic_info.key = 'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
+    @civic_info.key = api_key
     show
-  end
-
-  private
-
-  def clean_zipcode(zipcode)
-    zipcode.to_s.rjust(5, "0")[0...5]
   end
 
   def show
@@ -31,6 +25,12 @@ class EventManager
     end
   end
 
+  private
+
+  def clean_zipcode(zipcode)
+    zipcode.to_s.rjust(5, "0")[0...5]
+  end
+
   def legislators(zipcode)
     legislators = @civic_info.representative_info_by_address(
       address: zipcode,
@@ -40,6 +40,10 @@ class EventManager
     legislators.officials.map(&:name).join(', ')
   rescue StandardError
     'You can find your representatives by visiting www.commoncause.org/take-action/find-elected-officials'
+  end
+
+  def api_key
+    'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
   end
 end
 
