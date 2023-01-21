@@ -1,8 +1,9 @@
 require 'csv'
 require 'google/apis/civicinfo_v2'
+require 'erb'
 
 class EventManager
-  attr_accessor :content
+  attr_accessor :content, :name, :zipcode, :legislator_list
 
   def initialize(file)
     @file_name = file
@@ -13,25 +14,22 @@ class EventManager
     )
     @civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
     @civic_info.key = api_key
-    show
-  end
-
-  def show
     content.each do |row|
-      name = row[:first_name]
-      zipcode = clean_zipcode(row[:zipcode])
+      @name = row[:first_name]
+      @zipcode = clean_zipcode(row[:zipcode])
+      @legislator_list = legislators(zipcode)
 
-      puts personal_letter(name, legislators(zipcode))
+      puts personal_letter
     end
   end
 
-  def load_template
-    File.read('form_letter.html')
+  def erb_template
+    template_letter = File.read('form_letter.erb')
+    ERB.new template_letter
   end
 
-  def personal_letter(name, legislators)
-    letter = load_template.gsub('FIRST_NAME', name)
-    letter.gsub!('LEGISLATORS', legislators)
+  def personal_letter
+    erb_template.result(binding)
   end
 
   private
@@ -41,12 +39,11 @@ class EventManager
   end
 
   def legislators(zipcode)
-    legislators = @civic_info.representative_info_by_address(
+    @civic_info.representative_info_by_address(
       address: zipcode,
       levels: 'country',
       roles: ['legislatorUpperBody', 'legislatorLowerBody']
-    )
-    legislators.officials.map(&:name).join(', ')
+    ).officials
   rescue StandardError
     'You can find your representatives by visiting www.commoncause.org/take-action/find-elected-officials'
   end
@@ -55,3 +52,5 @@ class EventManager
     'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
   end
 end
+
+EventManager.new('event_attendees.csv')
