@@ -52,5 +52,3 @@ class EventManager
     'AIzaSyClRzDqDh5MsXwnCWi0kOiiBivP6JsSyBw'
   end
 end
-
-EventManager.new('event_attendees.csv')
