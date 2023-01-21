@@ -20,11 +20,6 @@ class EventManager
   private
 
   def clean_zipcode(zipcode)
-    return "00000" if zipcode.nil?
-    return zipcode.rjust(5, "0") if zipcode.length < 5
-    return zipcode.slice(0...5) if zipcode.length > 5
-
-    zipcode
+    zipcode.to_s.rjust(5, "0")[0...5]
   end
-
 end
