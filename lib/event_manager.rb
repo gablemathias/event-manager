@@ -3,7 +3,8 @@ require 'google/apis/civicinfo_v2'
 require 'erb'
 
 class EventManager
-  attr_accessor :content, :name, :zipcode, :legislator_list
+  attr_accessor :content, :zipcode, :legislator_list
+  attr_reader :id, :name
 
   def initialize(file)
     @file_name = file
@@ -14,17 +15,26 @@ class EventManager
     )
     @civic_info = Google::Apis::CivicinfoV2::CivicInfoService.new
     @civic_info.key = api_key
-    show
+    create
   end
 
-  def show
+  def create
     content.each do |row|
+      @id = row[0]
       @name = row[:first_name]
       @zipcode = clean_zipcode(row[:zipcode])
       @legislator_list = legislators(zipcode)
 
-      puts personal_letter
+      save_letters
     end
+  end
+
+  def save_letters
+    FileUtils.mkdir_p 'output'
+
+    filename = "output/thanks_#{id}.html"
+
+    File.open(filename, 'w') { |file| file.puts personal_letter }
   end
 
   private
