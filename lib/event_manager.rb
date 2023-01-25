@@ -4,7 +4,7 @@ require 'erb'
 
 class EventManager
   attr_accessor :content, :zipcode, :legislator_list
-  attr_reader :id, :name
+  attr_reader :id, :name, :phone
 
   def initialize(file)
     @file_name = file
@@ -24,6 +24,7 @@ class EventManager
       @name = row[:first_name]
       @zipcode = clean_zipcode(row[:zipcode])
       @legislator_list = legislators(zipcode)
+      @phone = clean_phonenumber(row[:homephone])
 
       save_letters
     end
@@ -53,7 +54,7 @@ class EventManager
   end
 
   def clean_phonenumber(phone)
-    phone = phone.to_s.gsub(/[\s()-.]/, '')
+    phone = phone.to_s.gsub(/[A-Za-z\s()-.]/, '')
     phone_s = phone.size
     return phone if phone_s == 10
     return phone[1...11] if phone[0] == "1" && phone_s == 11
