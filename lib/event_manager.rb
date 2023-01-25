@@ -52,6 +52,15 @@ class EventManager
     zipcode.to_s.rjust(5, "0")[0...5]
   end
 
+  def clean_phonenumber(phone)
+    phone = phone.to_s.gsub(/[\s()-.]/, '')
+    phone_s = phone.size
+    return phone if phone_s == 10
+    return phone[1...11] if phone[0] == "1" && phone_s == 11
+
+    phone.rjust(10, "0")[0...10]
+  end
+
   def legislators(zipcode)
     @civic_info.representative_info_by_address(
       address: zipcode,
